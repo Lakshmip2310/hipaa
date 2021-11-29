@@ -17,8 +17,6 @@ public class MongoDB {
 
     public static void Connect(String Database, String Collection) {
 
-        //TODO
-        //Fil the connection string
         mongoClient = MongoClients.create("mongodb://127.0.0.1:27017/?readPreference=primary&gssapiServiceName=mongodb&appname=MongoDB%20Compass&directConnection=true&ssl=false&maxIdleTimeMS=120000");
         MongoDatabase database = mongoClient.getDatabase(Database);
 

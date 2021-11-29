@@ -1,53 +1,100 @@
 package com.sahilmahajan.dataprivacyproject.Operations;
 
+import com.github.javafaker.Faker;
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
 import com.sahilmahajan.dataprivacyproject.Repo.PatientDetails;
-import com.sahilmahajan.dataprivacyproject.Utils.NewPatientDetails;
-import com.sahilmahajan.dataprivacyproject.Utils.SHA;
+import com.sahilmahajan.dataprivacyproject.Utils.InPatientDetails;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 public class   PatientOperations {
 
-    //For Internal Use
-    public void NewUser(NewPatientDetails newPatientDetails) {
 
+    public static void main(String[] args) {
+
+        InPatientDetails inPatientDetails = new InPatientDetails();
+        Faker fake = new Faker();
         PatientDetails patientDetails = new PatientDetails();
 
-        //Generating MRN for patient
-        int MRN = patientDetails.NewUserMRN();
+        String FileName = "C:\\Users\\sahil\\Downloads\\MOCK_DATA.csv";
 
-        //Inserting Patient Details in DB
-        System.out.println(patientDetails.InsertPatientDetails(MRN, newPatientDetails));
+        try (CSVReader Reader = new CSVReader(new FileReader(FileName))) {
+            List<String[]> Result = Reader.readAll();
+            System.out.println(Arrays.toString(Result.get(0)));
 
 
-    }
+            for (int i = 1; i < Result.size(); i++) {
+                for (int k = 0; k < Result.get(i).length; k++) {
 
-    //For External Use
-    public void PatientDetailsForExternalUse(int MRN, NewPatientDetails newPatientDetails) {
 
-        SHA sha = new SHA();
+                    if (k == 0) {
+                        inPatientDetails.setId(Result.get(i)[k]);
+                    }
+                    else if (k == 1) {
+                        String nhs_token = UUID.randomUUID().toString();
+                        inPatientDetails.setNhs_number(nhs_token);
+                    }
+                    else if (k == 2) {
+                        inPatientDetails.setFirst_name("XXXXX");
+                    }
+                    else if (k == 3) {
+                        inPatientDetails.setLast_name("XXXXX");
+                    }
+                    else if (k == 4) {
+                        inPatientDetails.setEmail("XXXXX");
+                    }
+                    else if (k == 5) {
+                        inPatientDetails.setGender(Result.get(i)[k]);
+                    }
+                    else if (k == 6) {
+                        inPatientDetails.setPhone(fake.phoneNumber().phoneNumber());
+                    }
+                    else if (k == 7) {
+                        inPatientDetails.setStreet("XXXXX");
+                    }
+                    else if (k == 8) {
+                        inPatientDetails.setCity(Result.get(i)[k]);
+                    }
+                    else if (k == 9) {
+                        inPatientDetails.setState(Result.get(i)[k]);
+                    }
+                    else if (k == 10) {
+                        inPatientDetails.setCountry(Result.get(i)[k]);
+                    }
+                    else if (k == 11) {
+                        inPatientDetails.setDiag_code(UUID.randomUUID().toString());
+                    }
+                    else if (k == 12) {
+                        inPatientDetails.setDesc_short(Result.get(i)[k]);
+                    }
+                    else if (k == 13) {
+                        inPatientDetails.setProc_code(UUID.randomUUID().toString());
+                    }
+                    else if (k == 14) {
+                        inPatientDetails.setProc_short(Result.get(i)[k]);
+                    }
+                    else if (k == 15) {
+                        inPatientDetails.setDrug_brand(Result.get(i)[k]);
+                    }
+                    else if (k == 16) {
+                        inPatientDetails.setDrug_generic(Result.get(i)[k]);
+                    }
+                    else if (k == 17) {
+                        inPatientDetails.setDrug_company(Result.get(i)[k]);
+                    }
+                }
+                patientDetails.InsertPatientDetails(inPatientDetails);
 
-        String SecureMRN = sha.Token(Integer.toString(MRN));
-        newPatientDetails.setFullName("XXXXXX");
+            }
 
-        String Age = "";
-        if (newPatientDetails.getAge() < 18) {
-            Age = "0-17";
+        } catch (IOException | CsvException e) {
+            e.printStackTrace();
         }
-        else if (newPatientDetails.getAge() < 25) {
-            Age = "18-24";
-        }
-        else if (newPatientDetails.getAge() < 35) {
-            Age = "25-34";
-        }
-        else if (newPatientDetails.getAge() < 50) {
-            Age = "35-49";
-        }
-        else if (newPatientDetails.getAge() >= 50) {
-            Age = "50+";
-        }
-
-        PatientDetails patientDetails = new PatientDetails();
-        patientDetails.InsertExternalUsePatientDetails(SecureMRN, newPatientDetails.getFullName(), Age, newPatientDetails.getPinCode());
-
     }
 
 }
